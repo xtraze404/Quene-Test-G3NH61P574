@@ -1,0 +1,23 @@
+{
+  "name": "walmart-queue-test",
+  "version": "1.0.0",
+  "description": "Auto-join and stress testing suite for Walmart queue system",
+  "main": "index.js",
+  "scripts": {
+    "test": "node queue-auto-join.js",
+    "stress": "node queue-stress-test.js",
+    "test:all": "npm run test && npm run stress"
+  },
+  "keywords": [
+    "queue",
+    "stress-test",
+    "walmart",
+    "auto-join"
+  ],
+  "author": "xtraze404",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {}
+}

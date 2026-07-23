@@ -1,12 +1,28 @@
-# Walmart Queue Test Suite
+# Walmart Queue Bot
 
-A comprehensive testing suite for the Walmart queue system with auto-join functionality and stress testing capabilities.
+Automated Walmart queue monitoring and checkout bot with real-time dashboard, user-approved checkout, and stealth features.
 
 ## Features
 
-- **Auto-Join Test**: Automatically joins multiple queue endpoints and validates the response
-- **Stress Test**: Ramps up concurrent requests to measure system capacity and performance
-- **Detailed Reporting**: Comprehensive metrics including response times, success rates, and throughput
+- **Auto Login**: Automatically logs into your Walmart account
+- **Stock Monitoring**: Continuously monitors multiple products for stock availability
+- **Fast Queue Entry**: Immediately enters queue when stock is detected
+- **Queue Position Tracking**: Shows your position in line and estimated wait time
+- **User-Approved Checkout**: Pauses at checkout page waiting for your approval
+- **Real-Time Dashboard**: Web interface showing live status, queue position, and activity log
+- **Stealth Mode**: Uses puppeteer-extra with stealth plugin to avoid detection
+- **Proxy Support**: Optional proxy configuration for additional anonymity
+
+## Product Watch List
+
+The bot monitors these products:
+- Pitch Black ETB
+- Pitch Black Booster Bundle
+- Pitch Black 3-Pack Blister
+- Destined Rivals ETB
+- Perfect Order Booster Bundle
+- First Partner Series 2
+- Prismatic Evolutions SPC
 
 ## Installation
 
@@ -14,192 +30,109 @@ A comprehensive testing suite for the Walmart queue system with auto-join functi
 npm install
 ```
 
-## Usage
-
-### Run Auto-Join Test
-
-Tests that the queue system can handle automatic joining from multiple sources:
-
-```bash
-npm test
-```
-
-**What it tests:**
-- Joining multiple queue endpoints
-- Retry logic with exponential backoff
-- Queue position validation
-- Estimated wait time accuracy
-
-### Run Stress Test
-
-Measures maximum capacity by sending increasingly concurrent requests:
-
-```bash
-npm run stress
-```
-
-**What it measures:**
-- Success rate at various concurrency levels
-- Response time percentiles (min, max, avg, median, p95, p99)
-- Throughput (requests per second)
-- Error rates and types
-- System stability under load
-
-### Run All Tests
-
-```bash
-npm run test:all
-```
-
 ## Configuration
 
-Edit the test files to configure:
+Edit `config.js` with your Walmart credentials:
 
-### queue-auto-join.js
 ```javascript
-const CONFIG = {
-  queueLinks: [
-    'https://example.com/queue/test-1',
-    'https://example.com/queue/test-2',
-    // Add more queue endpoints...
-  ],
-  timeout: 10000,
-  retries: 3,
+module.exports = {
+  EMAIL: 'your-email@example.com',
+  PASSWORD: 'your-password',
+  
+  // Optional settings
+  HEADLESS: false,           // Set to true to hide browser window
+  PROXY_URL: null,           // e.g., 'http://user:pass@proxy:8080'
+  CHECK_INTERVAL: 2000,      // Stock check interval in ms
+  DASHBOARD_PORT: 3000       // Dashboard web server port
 };
 ```
 
-### queue-stress-test.js
-```javascript
-const CONFIG = {
-  queueEndpoint: 'https://example.com/queue/stress-test',
-  concurrentRequests: [10, 50, 100, 250, 500], // Concurrency levels to test
-  timeout: 15000,
-  delayBetweenBatches: 2000, // ms between test batches
-};
+## Usage
+
+### Start the Bot with Dashboard
+
+```bash
+npm start
 ```
 
-## Output Examples
+Then open http://localhost:3000 in your browser.
 
-### Auto-Join Test Output
-```
-🚀 Starting Auto-Join Queue Test
-📍 Testing 3 queue endpoint(s)
------------------------------------
+### Dashboard Controls
 
-[1/3] Joining: https://example.com/queue/test-1
-[2/3] Joining: https://example.com/queue/test-2
-[3/3] Joining: https://example.com/queue/test-3
+1. **Start Bot**: Begins login and stock monitoring
+2. **Stop Bot**: Stops monitoring (keeps browser open)
+3. **Approve Checkout**: When checkout page is reached, click to complete purchase
+4. **Cancel Checkout**: Cancel the checkout process and resume monitoring
 
------------------------------------
-✅ AUTO-JOIN TEST RESULTS
+### Status Indicators
 
-[1] ✓ SUCCESS: https://example.com/queue/test-1
-    Position: 5
-    Est. Wait: 120s
-    Attempts: 1
+- **Idle**: Bot is ready but not running
+- **Logging In**: Authenticating with Walmart
+- **Monitoring**: Checking products for stock
+- **In Queue**: Waiting in line (shows position and wait time)
+- **Awaiting Approval**: Checkout page ready - waiting for your confirmation
+- **Checking Out**: Processing order
+- **Completed**: Order placed successfully
+- **Error**: Something went wrong
 
-📊 SUMMARY:
-   Total Tests: 3
-   Successful: 3
-   Failed: 0
-   Success Rate: 100.00%
-   Duration: 2.45s
-```
+## How It Works
 
-### Stress Test Output
-```
-📊 Batch 1: Sending 10 concurrent requests...
-📊 Batch 2: Sending 50 concurrent requests...
-...
+1. **Login**: Bot logs into your Walmart account using provided credentials
+2. **Monitor**: Continuously checks all watched products for stock
+3. **Detect**: When stock is found, immediately adds item to cart
+4. **Queue**: Enters the virtual waiting room if applicable
+5. **Checkout Ready**: When checkout page loads, bot pauses and notifies you
+6. **User Approval**: You review and approve via dashboard button
+7. **Complete**: Bot clicks "Place Order" to finalize purchase
 
-============================================================
-📊 STRESS TEST RESULTS
+## Environment Variables
 
-Per-Batch Breakdown:
-------------------------------------------------------------
+Optional overrides:
 
-Batch 1 (10 concurrent):
-  Results: 10/10 successful (100.00%)
-  Duration: 245ms
-  Throughput: 40.82 req/s
-
-Batch 2 (50 concurrent):
-  Results: 49/50 successful (98.00%)
-  Duration: 1203ms
-  Throughput: 41.56 req/s
-
-Aggregate Statistics:
-------------------------------------------------------------
-
-📈 Overall Performance:
-  Total Requests: 910
-  Successful: 880
-  Failed: 30
-  Success Rate: 96.70%
-
-⏱️  Response Times (successful requests):
-  Min: 145ms
-  Max: 2850ms
-  Average: 645ms
-  Median: 580ms
-  P95: 1250ms
-  P99: 1890ms
-
-📊 Throughput:
-  Average: 42.34 req/s
-
-💡 Recommendations:
-⚠️  High average response time detected. Consider:
-    - Optimizing database queries
-    - Implementing caching
-    - Adding more backend workers
+```bash
+PROXY_URL=http://proxy:8080 npm start
+DASHBOARD_PORT=8080 npm start
 ```
 
-## Interpreting Results
+## Activity Log
 
-### Success Rate
-- **95-100%**: Excellent - system is stable
-- **90-95%**: Good - minor issues under load
-- **<90%**: Poor - system needs optimization
+The dashboard shows a real-time log of all events:
+- Stock checks
+- Stock detections
+- Queue entry/position updates
+- Checkout ready notifications
+- User approvals/cancellations
+- Order completions
+- Errors and timeouts
 
-### Response Times
-- **Min/Max**: Shows range of performance
-- **Average**: Typical response time
-- **Median**: 50th percentile - real-world experience
-- **P95/P99**: Tail latencies - what 5% and 1% of users experience
+## Troubleshooting
 
-### Throughput
-Requests per second the system can handle. Compare this metric:
-- Against expected peak traffic
-- Across different concurrency levels for degradation patterns
+### Login Fails
+- Verify credentials in config.js
+- Check if account requires 2FA (not supported yet)
+- Try manual login first to ensure account works
 
-## Performance Tuning Tips
+### No Stock Detected
+- Products may genuinely be out of stock
+- Check if product URLs are still valid
+- Reduce CHECK_INTERVAL for faster detection (may increase detection risk)
 
-1. **High Response Times**: 
-   - Add database indexes
-   - Implement caching (Redis)
-   - Optimize query performance
+### Queue Timeout
+- Item may have gone out of stock while in queue
+- Queue system may have issues
+- Bot will automatically resume monitoring after timeout
 
-2. **High Error Rate**:
-   - Check server logs
-   - Increase timeout values
-   - Add circuit breakers
+### Captcha Appears
+- Bot uses stealth mode to minimize captchas
+- If captcha appears, solve it manually in the browser window
+- Consider using residential proxies if captchas persist
 
-3. **Low Throughput**:
-   - Increase server resources (CPU, RAM)
-   - Enable connection pooling
-   - Use load balancing
+## Safety Notes
 
-4. **Scalability Issues**:
-   - Implement queue sharding
-   - Use asynchronous processing
-   - Add message queues (RabbitMQ, Kafka)
-
-## Requirements
-
-- Node.js 12+
-- Axios for HTTP requests
-- Access to queue endpoints
+⚠️ **Use Responsibly**: 
+- Don't set check intervals too low (< 1000ms) to avoid rate limiting
+- Use proxies if running multiple instances
+- Be aware of Walmart's terms of service
 
 ## License
 

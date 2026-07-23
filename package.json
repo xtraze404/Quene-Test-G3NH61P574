@@ -1,23 +1,34 @@
 {
-  "name": "walmart-queue-test",
-  "version": "1.0.0",
-  "description": "Auto-join and stress testing suite for Walmart queue system",
+  "name": "walmart-queue-bot",
+  "version": "2.0.0",
+  "description": "Walmart queue bot with auto-login, stock monitoring, queue entry, and user-approved checkout",
   "main": "index.js",
   "scripts": {
-    "test": "node queue-auto-join.js",
-    "stress": "node queue-stress-test.js",
-    "test:all": "npm run test && npm run stress"
+    "start": "node index.js",
+    "bot": "node index.js",
+    "check": "node stock-checker.js",
+    "dashboard": "node stock-dashboard.js"
   },
   "keywords": [
-    "queue",
-    "stress-test",
     "walmart",
-    "auto-join"
+    "queue",
+    "bot",
+    "stock-monitor",
+    "auto-checkout",
+    "puppeteer"
   ],
   "author": "xtraze404",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.0"
+    "axios": "^1.6.0",
+    "express": "^4.18.2",
+    "https-proxy-agent": "^7.0.2",
+    "http-proxy-agent": "^7.0.0",
+    "puppeteer-core": "^21.0.0",
+    "puppeteer-extra": "^3.1.15",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "@cliqz/adblocker-puppeteer": "^1.27.3",
+    "ws": "^8.14.2"
   },
   "devDependencies": {}
 }
